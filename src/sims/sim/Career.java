@@ -38,17 +38,6 @@ public class Career {
         return 40 + (level * 20);
     }
 
-    public void loadState(int level, int performance) {
-        if (level < 0) {
-            this.level = 0;
-        } else if (level >= TITLES.size()) {
-            this.level = TITLES.size() - 1;
-        } else {
-            this.level = level;
-        }
-        this.performance = performance;
-    }
-
     public List<String> applyWorkResult(int productivityScore) {
         List<String> messages = new ArrayList<>();
         performance += productivityScore;

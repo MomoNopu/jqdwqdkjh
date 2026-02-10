@@ -23,16 +23,9 @@ Choose one action each turn:
 6. Socialize
 7. Study Skill
 8. Work Shift
-9. Save game
-10. Load game
-11. Quit
+9. Quit
 
-Activity actions consume in-game hours and update needs, money, relationship, and/or career.
-
-## Save and load
-- Use option **9** to save progress into `savegame.txt`.
-- Use option **10** to load from `savegame.txt` at any time.
-- On startup you can choose **Load game** immediately.
+Each action consumes in-game hours and updates needs, money, relationship, and/or career.
 
 ## Win/Loss conditions
 - **Win:** Reach beyond Day 7.

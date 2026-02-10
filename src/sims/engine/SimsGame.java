@@ -10,26 +10,21 @@ import sims.activity.StudyActivity;
 import sims.activity.UseToiletActivity;
 import sims.activity.WorkShiftActivity;
 import sims.io.ConsoleIO;
-import sims.io.SaveManager;
 import sims.model.NeedType;
 import sims.sim.Sim;
 
-import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 
 public class SimsGame {
     private static final int TARGET_DAYS = 7;
-    private static final Path DEFAULT_SAVE_FILE = Path.of("savegame.txt");
 
     private final ConsoleIO io;
-    private final SaveManager saveManager;
     private final List<Activity> activities;
     private Sim sim;
 
     public SimsGame(ConsoleIO io) {
         this.io = io;
-        this.saveManager = new SaveManager();
         this.activities = new ArrayList<>();
         activities.add(new EatMealActivity());
         activities.add(new SleepActivity());
@@ -47,19 +42,8 @@ public class SimsGame {
 
         while (sim.getDay() <= TARGET_DAYS) {
             renderStatus();
-            PlayerChoice choice = promptChoice();
-
-            if (choice.type == ChoiceType.ACTIVITY) {
-                executeActivity(choice.activity);
-            } else if (choice.type == ChoiceType.SAVE) {
-                saveGame();
-            } else if (choice.type == ChoiceType.LOAD) {
-                loadGame();
-            } else if (choice.type == ChoiceType.QUIT) {
-                io.println("Thanks for playing!");
-                printEndSummary(false);
-                return;
-            }
+            Activity selected = promptActivity();
+            executeActivity(selected);
 
             if (sim.getMoodScore() <= 5) {
                 io.println("\nYour Sim has burnt out completely. Game over.");
@@ -80,21 +64,6 @@ public class SimsGame {
     }
 
     private void setupSim() {
-        io.println("1) New game");
-        io.println("2) Load game from savegame.txt");
-        io.print("> ");
-        String mode = io.readLine().trim();
-
-        if ("2".equals(mode)) {
-            try {
-                sim = saveManager.load(DEFAULT_SAVE_FILE);
-                io.println("Loaded save for " + sim.getName() + " successfully.");
-                return;
-            } catch (Exception e) {
-                io.println("Could not load save file. Starting new game instead.");
-            }
-        }
-
         io.print("Enter your Sim name: ");
         String name = io.readLine().trim();
         if (name.isEmpty()) {
@@ -126,37 +95,31 @@ public class SimsGame {
         }
     }
 
-    private PlayerChoice promptChoice() {
-        io.println("\nChoose an option:");
+    private Activity promptActivity() {
+        io.println("\nChoose an activity:");
         for (int i = 0; i < activities.size(); i++) {
             Activity a = activities.get(i);
             io.println((i + 1) + ") " + a.name() + " (" + a.durationHours() + "h) - " + a.description());
         }
-        io.println("9) Save game");
-        io.println("10) Load game");
-        io.println("11) Quit game");
+        io.println("9) Quit game");
 
         while (true) {
             io.print("> ");
             String line = io.readLine().trim();
             try {
                 int choice = Integer.parseInt(line);
-                if (choice >= 1 && choice <= activities.size()) {
-                    return PlayerChoice.activity(activities.get(choice - 1));
-                }
                 if (choice == 9) {
-                    return PlayerChoice.simple(ChoiceType.SAVE);
+                    io.println("Thanks for playing!");
+                    printEndSummary(false);
+                    System.exit(0);
                 }
-                if (choice == 10) {
-                    return PlayerChoice.simple(ChoiceType.LOAD);
-                }
-                if (choice == 11) {
-                    return PlayerChoice.simple(ChoiceType.QUIT);
+                if (choice >= 1 && choice <= activities.size()) {
+                    return activities.get(choice - 1);
                 }
             } catch (NumberFormatException ignored) {
                 // continue loop
             }
-            io.println("Invalid option. Enter a number between 1 and 11.");
+            io.println("Invalid option. Enter a number between 1 and 9.");
         }
     }
 
@@ -166,24 +129,6 @@ public class SimsGame {
         sim.advanceTime(selected.durationHours());
         for (String message : messages) {
             io.println("- " + message);
-        }
-    }
-
-    private void saveGame() {
-        try {
-            saveManager.save(sim, DEFAULT_SAVE_FILE);
-            io.println("Game saved to " + DEFAULT_SAVE_FILE + ".");
-        } catch (Exception e) {
-            io.println("Failed to save game: " + e.getMessage());
-        }
-    }
-
-    private void loadGame() {
-        try {
-            sim = saveManager.load(DEFAULT_SAVE_FILE);
-            io.println("Game loaded from " + DEFAULT_SAVE_FILE + ".");
-        } catch (Exception e) {
-            io.println("Failed to load game: " + e.getMessage());
         }
     }
 
@@ -197,30 +142,5 @@ public class SimsGame {
         io.println("Friendship: " + sim.getRelationship().getFriendship());
         io.println("Mood score: " + sim.getMoodScore());
         io.println("=================================");
-    }
-
-    private enum ChoiceType {
-        ACTIVITY,
-        SAVE,
-        LOAD,
-        QUIT
-    }
-
-    private static class PlayerChoice {
-        private final ChoiceType type;
-        private final Activity activity;
-
-        private PlayerChoice(ChoiceType type, Activity activity) {
-            this.type = type;
-            this.activity = activity;
-        }
-
-        private static PlayerChoice activity(Activity activity) {
-            return new PlayerChoice(ChoiceType.ACTIVITY, activity);
-        }
-
-        private static PlayerChoice simple(ChoiceType type) {
-            return new PlayerChoice(type, null);
-        }
     }
 }

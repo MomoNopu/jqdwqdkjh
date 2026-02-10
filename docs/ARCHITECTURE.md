@@ -16,7 +16,6 @@
   - Concrete actions (eat, sleep, shower, etc.) implement behavior polymorphically.
 - **I/O (`sims.io`)**
   - `ConsoleIO`: scanner/output abstraction.
-  - `SaveManager`: plain-text persistence service for save/load.
 
 ## Time and simulation flow
 

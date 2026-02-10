@@ -11,7 +11,6 @@ A text-based life simulation inspired by **The Sims**, implemented with object-o
 - Relationship/friendship tracking.
 - Warnings for critical needs and low mood.
 - Win/lose conditions for a 7-day simulation.
-- Save/load system using plain text save file (`savegame.txt`).
 - Lightweight unit tests (no Maven/Gradle required).
 
 ## Project Structure
@@ -43,7 +42,6 @@ mkdir -p out_test
 javac -d out_test $(find src test -name "*.java")
 java -cp out_test sims.SimCoreTest
 java -cp out_test sims.ActivityTest
-java -cp out_test sims.SaveManagerTest
 ```
 
 ## OOP Design Notes

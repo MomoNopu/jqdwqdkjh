@@ -69,41 +69,6 @@ public class Sim {
         }
     }
 
-    public void loadState(
-            int day,
-            int hour,
-            int money,
-            int hunger,
-            int energy,
-            int hygiene,
-            int fun,
-            int social,
-            int bladder,
-            int careerLevel,
-            int careerPerformance,
-            int friendship
-    ) {
-        this.day = Math.max(1, day);
-        this.hour = Math.max(0, Math.min(23, hour));
-        this.money = Math.max(0, money);
-
-        setNeedAbsolute(NeedType.HUNGER, hunger);
-        setNeedAbsolute(NeedType.ENERGY, energy);
-        setNeedAbsolute(NeedType.HYGIENE, hygiene);
-        setNeedAbsolute(NeedType.FUN, fun);
-        setNeedAbsolute(NeedType.SOCIAL, social);
-        setNeedAbsolute(NeedType.BLADDER, bladder);
-
-        this.career.loadState(careerLevel, careerPerformance);
-        this.relationship.loadState(friendship);
-    }
-
-    private void setNeedAbsolute(NeedType type, int value) {
-        SimNeed need = needs.get(type);
-        int delta = value - need.getValue();
-        need.modify(delta);
-    }
-
     public void advanceTime(int hours) {
         for (int i = 0; i < hours; i++) {
             hour++;

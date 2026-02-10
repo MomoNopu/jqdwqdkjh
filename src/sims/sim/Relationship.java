@@ -17,16 +17,6 @@ public class Relationship {
         return friendship;
     }
 
-    public void loadState(int friendship) {
-        this.friendship = friendship;
-        if (this.friendship < 0) {
-            this.friendship = 0;
-        }
-        if (this.friendship > 100) {
-            this.friendship = 100;
-        }
-    }
-
     public void changeFriendship(int delta) {
         friendship += delta;
         if (friendship < 0) {
